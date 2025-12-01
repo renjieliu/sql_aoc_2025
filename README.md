@@ -1,2 +1,6 @@
-# aoc_2025
-https://adventofcode.com/2025
+# aoc_2025 
+https://adventofcode.com/2025 
+
+Solving the problems in T-SQL
+
+
