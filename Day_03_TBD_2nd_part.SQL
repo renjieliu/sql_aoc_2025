@@ -246,7 +246,6 @@ select ans_1 = sum(mx) from rpt
 -- order by 1, 2 desc 
 
 
-select * from  string_split('684756773635544','')
 
 
 
