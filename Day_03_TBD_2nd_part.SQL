@@ -246,30 +246,7 @@ select ans_1 = sum(mx) from rpt
 -- order by 1, 2 desc 
 
 
-; with cte as
-(
-select  
-cnt = count(*) 
---   t1.*  ,  concat = cast(concat( t1.curr, t2.curr, t3.curr, t4.curr, t5.curr, t6.curr, t7.curr, t8.curr, t9.curr, t10.curr, t11.curr, t12.curr) as bigint) 
-from #base t1 
-inner join #base t2 on t1.s_id = t2.s_id and t1.id < t2.id 
-inner join #base t3 on t2.s_id = t3.s_id and t2.id < t3.id 
-inner join #base t4 on t3.s_id = t4.s_id and t3.id < t4.id 
-inner join #base t5 on t4.s_id = t5.s_id and t4.id < t5.id 
-inner join #base t6 on t5.s_id = t6.s_id and t5.id < t6.id 
-inner join #base t7 on t6.s_id = t7.s_id and t6.id < t7.id 
-inner join #base t8 on t7.s_id = t8.s_id and t7.id < t8.id 
-inner join #base t9 on t8.s_id = t9.s_id and t8.id < t9.id 
-inner join #base t10 on t9.s_id = t10.s_id and t9.id < t10.id 
-inner join #base t11 on t10.s_id = t11.s_id and t10.id < t11.id 
-inner join #base t12 on t11.s_id = t12.s_id and t11.id < t12.id 
-)
-, rpt as (
-select s_id, mx = max(concat) from cte
-group by s_id
-)
-select ans_2 = sum(mx) from rpt
-
+select * from  string_split('684756773635544','')
 
 
 
