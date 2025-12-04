@@ -246,7 +246,7 @@ select ans_1 = sum(mx) from rpt
 -- order by 1, 2 desc 
 
 
-
+-- select *, dp = REPLICATE(' ') from #input 
 
 
 

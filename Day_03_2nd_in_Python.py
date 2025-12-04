@@ -56,7 +56,7 @@ def find_max_dp(s, need):
 
     for pos in range(total_length-1, -1, -1):
         for to_take in range(1, need+1):
-            if pos + to_take > total_length: 
+            if pos + to_take == total_length:  # this is the base case in the recursive.
                 continue
             A = dp[pos+1][to_take]
             B = s[pos] + dp[pos+1][to_take-1]
