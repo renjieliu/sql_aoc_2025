@@ -7,7 +7,9 @@ for line in lines:
     arr.append([" "] + list(line) + [" "])
 
 arr = [[" "] * len(arr[1])] + arr + [ [" "] * len(arr[1])]
+
 cnt = 0
+total_removed = 0 
 
 while True:
     remove = []
@@ -26,10 +28,11 @@ while True:
     for r, c in remove:
         arr[r][c] = '.'  
 
-    cnt += len(remove)
-
+    total_removed += len(remove)
+    cnt+=1
     
-print(cnt)
+print('total removed:' ,total_removed)
+print('total iteration:' , cnt)
 
 
 
