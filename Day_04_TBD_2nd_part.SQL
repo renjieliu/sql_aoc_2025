@@ -196,10 +196,22 @@ where cnt_at < 4
 
 -- instead of update on the string and check,  using log approach to record the removeable position after each iteration
 
+
+-- 1. find all the removeable @,just like part 1 , record all the locations to be removed
+-- 2. keep finding the removeable ones, exclude the ones removed in all population, and in the neighbour
+-- 3. in each step, form the ones can be removed in current step, until none can be removed
+
+------- issue: cannot concat the pos in the recursive part
+-- string_agg --> recursive CTE does not allow aggregate function in the recursive part 
+-- for XML path ('') -->  Recursive references are not allowed in subqueries.
+
+---> -- 20251205_153750: Need to think about using a customed function for the logic
+
+
 ; with cte as 
 (
-    select total_removeable = string_agg(pos_for_concat, '') within group (order by pos) 
-    , curr_removeable = string_agg(pos_for_concat, '') within group (order by pos) 
+    select 
+    total_removeable = cast(string_agg(pos_for_concat, '') within group (order by pos)  as varchar(max))
     from 
     (
         select distinct 
@@ -209,43 +221,55 @@ where cnt_at < 4
         from #base curr inner join #base neib on abs(neib.r - curr.r) <= 1 and abs(neib.c - curr.c) <= 1 -- to find the 8 adjacent neighbours
         where curr.ch = '@' and neib.pos != curr.pos
     ) _ 
-    where cnt_at < 4 
+    where cnt_at < 4 -- this is the initial scenario
 
     union all 
     
-    select 
-    total_removeable
-    , curr_removeable 
-    from 
-    (
-        select 
-        total_removeable = prev_TotalRemoveable + string_agg(pos_for_concat, '') within group (order by pos)
-        ,curr_removeable = string_agg(pos_for_concat, '') within group (order by pos)
-        , prev_removeable
-        from 
-        (
-            select 
-            distinct 
-            pos_for_concat = '`' + cast(curr.pos as varchar) + '`'
-            , curr.pos
-            , cnt_at = count(case when neib.ch = '@' 
-                                and cte.total_removeable not like '%' +  concat('`' , cast(neib.pos as varchar) ,  '`' ) + '%' -- this position is not taken
-                                then neib.pos else null end
-                            ) over (partition by curr.pos)
-            , prev_TotalRemoveable = cte.total_removeable   
-            , prev_removeable = cte.curr_removeable  
-            from cte 
-            inner join #base curr on curr.c is not null -- dummy logic, just to make the recursive cte work
-            inner join #base neib on abs(neib.r - curr.r) <= 1 and abs(neib.c - curr.c) <= 1 -- to find the 8 adjacent neighbours
-            where curr.ch = '@' and neib.pos != curr.pos
-        ) calc 
-        where cnt_at < 4
-    ) _ where curr_removeable != prev_removeable   
+  select total_removeable = replace(
+                                replace (
+
+                                            (
+                                                    select pos = 
+                                                        ( select pos from 
+
+                                                            (    
+                                                                select 
+                                                                pos = '`' + pos + '`'
+                                                                from 
+                                                                (
+                                                                    select 
+                                                                        rn = ROW_NUMBER() over (partition by pos, cnt_at order by (select null)) -- avoid using distinct 
+                                                                        , pos
+                                                                        , cnt_at
+                                                                    from
+                                                                    (
+                                                                        select 
+                                                                        curr.pos
+                                                                        , cnt_at = count(case when neib.ch = '@' 
+                                                                                            and cte.total_removeable not like '%' +  concat('`' , cast(neib.pos as varchar) ,  '`' ) + '%' -- this position is not taken
+                                                                                            then neib.pos 
+                                                                                            else null 
+                                                                                        end
+                                                                                        ) over (partition by curr.pos)
+                                                                        from cte 
+                                                                        inner join #base curr on curr.c is not null -- dummy logic, just to make the recursive cte work
+                                                                        inner join #base neib on abs(neib.r - curr.r) <= 1 and abs(neib.c - curr.c) <= 1 -- to find the 8 adjacent neighbours
+                                                                        where curr.ch = '@' and neib.pos != curr.pos and cte.total_removeable not like '%' +  concat('`' , cast(curr.pos as varchar) ,  '`' ) + '%'
+                                                                    ) core 
+                                                                    where cnt_at < 4
+                                                                ) distincted 
+                                                            where rn = 1
+                                                            ) _ for xml path ('')
+                                                        )
+                                                )
+                                                ,  '<pos>'
+                                                , '')
+                                    , '</pos>'
+                                    , ''
+                                    )
+
 )
 select * from cte 
-
-
-
 
 
 
