@@ -65,6 +65,8 @@ select ans1 = sum(res) from cte
 -- 20251206_101841: no time right now  
 
 
+select * from #input
+
 select * from #base 
 
 drop table if exists #revised
