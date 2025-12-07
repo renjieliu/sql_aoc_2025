@@ -22,8 +22,36 @@ for r in range(1, len(arr)):
     
     dp.append(curr) 
 
-print(dp)            
+# print(dp)            
 print('ans1:', cnt)        
+
+
+
+dp = [ [ 1 if _ == "S" else 0 for _ in list(arr[0]) ] ]
+
+for r in range(1, len(arr)):
+    curr = [ x for x in dp[-1]] # copy the previous row
+    
+    for c in range(1, len(arr[0])-1):
+        if arr[r][c+1] == "^":
+            curr[c] += dp[-1][c+1] 
+    
+        if arr[r][c-1] == "^":
+            curr[c] += dp[-1][c-1]
+        
+        if arr[r][c] == "^":
+            curr[c] = 0 
+
+    
+    dp.append(curr)
+ 
+
+# for i in range(len(dp)): 
+#     print(i, dp[i])
+
+print("ans2:", sum(dp[-1]))
+
+
 
 
 
