@@ -67,7 +67,7 @@ rn = ROW_NUMBER() over(order by cost)
 , b
 , cost
 from base
-) 
+)  -- select * from ordered order by cost desc 
 ,top10 as 
 (select 
   rn = '`'+ cast(rn as varchar(max)) + '`'
