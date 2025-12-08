@@ -75,8 +75,9 @@ from base
   , b_s_id
   , a
   , b
+  , cost
  from ordered where rn <= 10
-) -- select * from top10 order by 2  ; 
+)  -- select * from top10 order by cost   ; 
 , cte as (
   select 
   rn
