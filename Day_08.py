@@ -81,7 +81,7 @@ while True:
     parent = {}
     size = {}
 
-    for a, b, c in cost:
+    for a, b, c in cost[:cnt]:
         union(a, b)
 
     leaf = {}
@@ -105,6 +105,7 @@ while True:
         break
     else:
         cnt += 1 
+    print(cnt)
 
 print(cost[cnt-1])
 
@@ -112,6 +113,7 @@ A = int(arr[cost[cnt-1][0]].split(",")[0])
 B = int(arr[cost[cnt-1][1]].split(",")[0])
 
 print('ans2: ', A*B)
+
 
 
 
