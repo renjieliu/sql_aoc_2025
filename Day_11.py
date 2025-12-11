@@ -593,25 +593,32 @@ for b in base:
 # print(hmp_input)
 
 
-from functools import lru_cache
 
-@lru_cache(None)
-def dfs(curr, seen_fft, seen_dac):
-    if curr == "out":
-        return 1 if seen_fft and seen_dac else 0
-    
-    seen_fft = seen_fft or curr == 'fft'
-    seen_dac = seen_dac or curr == 'dac'
-    
-    total = 0
-    for machine in hmp_input[curr]: 
-        total += dfs(machine, seen_fft, seen_dac)
+def dfs(curr, seen_fft, seen_dac, dp):
+    if (curr, seen_fft, seen_dac) in dp: # (curr, seen_fft, seen_dac) meaning the paths count from this point on. Not how many times (curr, seen_fft, seen_dac) is seen.
+        return dp[(curr, seen_fft, seen_dac)]
+    else:
+        if curr == "out":
+            dp[(curr, seen_fft, seen_dac)] = 1 if seen_fft and seen_dac else 0
+        
+        else:
+            seen_fft = seen_fft or curr == 'fft'
+            seen_dac = seen_dac or curr == 'dac'
+            
+            total = 0
+            for machine in hmp_input[curr]: 
+                total += dfs(machine, seen_fft, seen_dac, dp)
+            
+            dp[(curr, seen_fft, seen_dac)] = total 
 
-    return total 
+        return dp[(curr, seen_fft, seen_dac)]
 
+
+dp = {}
 starting = 'svr'
-ans2 = dfs(starting, 0, 0)
-print('ans2: ', ans2)
+ans2 = dfs(starting, 0, 0, dp)
+print('ans2: ', dp[(starting, 0, 0)])
+
 
 
 
