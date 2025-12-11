@@ -636,6 +636,7 @@ option (maxrecursion 0 )
  
 ----- part 2
 --- -- 20251211_111115 Taking long time to run
+-- Getting correct answer with Python - 332052564714990 - not feasible with SQL for brutal force
 
 
 drop table if exists #res_2
